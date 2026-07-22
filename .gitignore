@@ -3,3 +3,5 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 *.egg-info/
+Wald-1945.pdf
+Deng et al 2013.pdf
