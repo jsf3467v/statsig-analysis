@@ -1,14 +1,17 @@
-# Statsig Experiment Analysis
+# Experiment Analysis Toolkit
 
 [![CI](https://github.com/jsf3467v/statsig-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/jsf3467v/statsig-analysis/actions/workflows/ci.yml)
 
-This experiment analysis toolkit integrates with the 
-[Statsig](https://statsig.com) software development kit, which manages user allocation to variants, tracks exposures
-and events, and computes outcome scores using vectorized statistics with confidence intervals.
-It employs methods such as the two-portion test, Welch test, sequential probability ratio testing, winsorization, 
-and power and sample size planing, and variance reduction with Controlled Experiment Using Pre-Experiment Data (CUPED). The focus is on accurate statistics, with all test 
-results verified against a reference. The offline-compatible integration layer connects seamlessly to a live Statsig project 
-once a single environment variable is configured.
+A statistics engine for online controlled experiments, with a pluggable
+assignment-and-logging backend. It reads variant assignments, exposures, and
+events, and scores outcomes with vectorized statistics and confidence intervals.
+The engine implements the two-proportion test, Welch's t-test, sequential
+probability ratio testing, winsorization, power and sample-size planning, and
+variance reduction via CUPED (Controlled-experiment Using Pre-Experiment Data).
+Every test is verified against a reference implementation. A
+[Statsig](https://statsig.com) SDK integration is included as a reference
+backend and runs fully offline, connecting to a live project once a single
+environment variable is set.
 
 
 ## Objective
@@ -50,7 +53,7 @@ seeded random number generator and a planted effect, so it holds no real user
 information and exists only so the analysis can be checked against a known
 ground truth.
 
-## Statsig integration
+## Statsig Integration
 
 ```bash
 pip install -r requirements-sdk.txt      # statsig-python-core
