@@ -1,5 +1,7 @@
 # Statsig Experiment Analysis
 
+[![CI](https://github.com/jsf3467v/statsig-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/jsf3467v/statsig-analysis/actions/workflows/ci.yml)
+
 This experiment analysis toolkit integrates with the 
 [Statsig](https://statsig.com) software development kit, which manages user allocation to variants, tracks exposures
 and events, and computes outcome scores using vectorized statistics with confidence intervals.
