@@ -16,13 +16,13 @@ except Exception:
     SDK_AVAILABLE = False
 
 
-def session(secret: str | None = None, environment: str = "development"):
+def session(secret: str | None = None, environment: str | None = None):
     """Initialized Statsig client; offline when no secret is supplied."""
     if not SDK_AVAILABLE:
         raise RuntimeError("statsig-python-core is not installed")
     secret = secret or os.environ.get("STATSIG_SERVER_SECRET")
     options = StatsigOptions()
-    options.environment = environment
+    options.environment = environment or os.environ.get("STATSIG_ENVIRONMENT", "production")
     options.output_log_level = "error"
     options.disable_network = secret is None
     client = Statsig(secret or "secret-offline", options)
