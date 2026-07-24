@@ -18,7 +18,13 @@ from .export import arms, counts
 from .report import report
 from .simulate import simulate
 from .stats import (
-    cuped, power, relative_lift, sample_size, two_proportion, welch, winsorize,
+    cuped,
+    power,
+    relative_lift,
+    sample_size,
+    two_proportion,
+    welch,
+    winsorize,
 )
 
 
