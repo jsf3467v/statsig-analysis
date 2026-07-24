@@ -14,9 +14,12 @@ from pathlib import Path
 
 import numpy as np
 
+from .export import arms, counts
 from .report import report
 from .simulate import simulate
-from .stats import cuped, power, sample_size, two_proportion, welch, winsorize
+from .stats import (
+    cuped, power, relative_lift, sample_size, two_proportion, welch, winsorize,
+)
 
 
 def table(path: str) -> dict[str, np.ndarray]:
@@ -66,6 +69,22 @@ def cmd_size(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_compare(args: argparse.Namespace) -> int:
+    data = arms(args.directory, args.metric)
+    n_c, x_c = counts(data["control"])
+    n_t, x_t = counts(data["treatment"])
+    absolute = two_proportion(x_c, n_c, x_t, n_t)
+    relative = relative_lift(x_c, n_c, x_t, n_t)
+    print(f"control    {n_c} units, {x_c} converted ({x_c / n_c:.4f})")
+    print(f"treatment  {n_t} units, {x_t} converted ({x_t / n_t:.4f})")
+    print(f"absolute   {absolute.estimate:+.4f} "
+          f"[{absolute.ci_low:+.4f}, {absolute.ci_high:+.4f}]")
+    print(f"relative   {relative.estimate:+.2f}% "
+          f"[{relative.ci_low:+.1f}%, {relative.ci_high:+.1f}%] "
+          f"p = {relative.p_value:.2e}")
+    return 0
+
+
 def cmd_sdk(args: argparse.Namespace) -> int:
     from . import sdk
     if not sdk.SDK_AVAILABLE:
@@ -100,6 +119,11 @@ def parser() -> argparse.ArgumentParser:
     z.add_argument("--alpha", type=float, default=0.05)
     z.add_argument("--power", type=float, default=0.8)
     z.set_defaults(func=cmd_size)
+
+    c = sub.add_parser("compare", help="score a Statsig raw export")
+    c.add_argument("directory")
+    c.add_argument("--metric", default="purchase")
+    c.set_defaults(func=cmd_compare)
 
     d = sub.add_parser("sdk-demo", help="run the offline Statsig SDK demo")
     d.set_defaults(func=cmd_sdk)

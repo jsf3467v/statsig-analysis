@@ -5,3 +5,5 @@ __pycache__/
 *.egg-info/
 Wald-1945.pdf
 Deng et al 2013.pdf
+.DS_Store
+statsig-export/

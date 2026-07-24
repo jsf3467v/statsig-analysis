@@ -99,3 +99,24 @@ def cuped(metric: np.ndarray, covariate: np.ndarray) -> np.ndarray:
         return y.copy()
     theta = np.cov(y, x, ddof=1)[0, 1] / var_x
     return y - theta * (x - x.mean())
+
+
+def relative_lift(x_c: int, n_c: int, x_t: int, n_t: int, alpha: float = 0.05) -> Result:
+    """Percent change in rate, treatment against control, by the delta method.
+
+    Experimentation platforms report lift on this scale, so this is the form to
+    compare against a platform result. The interval is built on the log ratio,
+    which keeps it positive and asymmetric.
+    """
+    if n_c == 0 or n_t == 0:
+        raise ValueError("each arm needs at least one unit")
+    if x_c == 0 or x_t == 0:
+        raise ValueError("each arm needs at least one converting unit")
+    p_c, p_t = x_c / n_c, x_t / n_t
+    ratio = p_t / p_c
+    se_log = sqrt((1 - p_c) / x_c + (1 - p_t) / x_t)
+    z = stats.norm.ppf(1 - alpha / 2)
+    low, high = ratio * np.exp(-z * se_log), ratio * np.exp(z * se_log)
+    p_value = 2 * stats.norm.sf(abs(log(ratio)) / se_log) if se_log > 0 else 1.0
+    return Result("relative_lift_pct", 100 * (ratio - 1), 100 * (low - 1),
+                  100 * (high - 1), p_value, p_value < alpha)
