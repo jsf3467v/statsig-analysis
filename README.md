@@ -68,6 +68,41 @@ project, provide a server key through the environment.
 export STATSIG_SERVER_SECRET=secret-...
 ```
 
+## Cross-checked against a live experiment
+
+The toolkit was checked against a real experiment run through Statsig instead of 
+synthetic data alone. Eight thousand simulated units were assigned
+through the software development kit, with exposures and purchase events
+recorded by the platform. The underlying conversion rates were set by the
+traffic script at $10 \%$ for control and $14 \%$ for treatment,
+so the true effect is known in advance, and the purpose of the exercise is to
+confirm that both the platform and this toolkit recover it from the same data.
+
+The `compare` command reads the exported first-exposure and unit-metric files,
+joins assignment to outcome, and reports the effect on both scales.
+
+```bash
+PYTHONPATH=src python -m experiment compare statsig-export/raw_data
+```
+control 3994 units, 402 converted (0.1007)
+treatment 4006 units, 562 converted (0.1403)
+absolute +0.0396 [+0.0254, +0.0539]
+relative +39.38% [+23.6%, +57.2%] p = 6.30e-08
+
+Statsig reported a lift of $39.38\%$ with an interval of $23.7\%$ to $57.5\%$,
+so the point estimate reproduces exactly and the interval agrees to within a
+few tenths of a percentage point. The remaining difference arises because the two
+methods handle the metric differently; the platform calculates based on the
+mean of an event count, while the proportion test considers each unit as either converting
+or not. Both approaches are valid, and they align here because no unit
+recorded more than one purchase.
+
+This comparison involves a single metric rather than a comprehensive validation, and the 
+users used in the test were synthetic. It confirms that the data assignment to 
+records and events is correct and that the statistics calculated match the platform's reports for the same data.
+
+
+
 ## Methods
 
 The two-proportion test measures the difference in conversion rate between
